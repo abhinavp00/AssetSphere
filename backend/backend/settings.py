@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-na!chmv3x93r8k@0d2ry9m+4#80t)7=^i2hz5auq)wo6k9i!_c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "AssetSphere-back.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 
 # Application definition
@@ -56,6 +60,13 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'backend.urls'
 AUTH_USER_MODEL = 'backapp.User'
 CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "https://asset-sphere.vercel.app",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "https://asset-sphere.vercel.app",
+]
 
 
 TEMPLATES = [
@@ -122,3 +133,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
