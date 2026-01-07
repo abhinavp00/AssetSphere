@@ -1,0 +1,234 @@
+/* ================= ROOT ================= */
+.asset-container {
+  padding: 24px;
+  font-family: "Segoe UI", sans-serif;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+/* ================= HEADER ================= */
+.asset-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.asset-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #1e293b;
+}
+
+.btn-add {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-add:hover {
+  background: #1d4ed8;
+}
+
+/* ================= SEARCH ================= */
+.asset-search {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.asset-search input {
+  width: 320px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5f5;
+  font-size: 14px;
+  outline: none;
+}
+
+.asset-search input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* ================= CARDS ================= */
+.asset-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.asset-card {
+  padding: 18px;
+  border-radius: 12px;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.asset-card h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.asset-card p {
+  margin-top: 10px;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+/* Card Colors */
+.asset-card.total {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.asset-card.in-use {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.asset-card.maintenance {
+  background: linear-gradient(135deg, #facc15, #eab308);
+  color: #000;
+}
+
+.asset-card.disposed {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+/* ================= FORM ================= */
+.asset-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.asset-form input,
+.asset-form select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+}
+
+.asset-form input:focus,
+.asset-form select:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.asset-form button {
+  grid-column: span 2;
+  background: #061f55;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.asset-form button:hover {
+  background: #1d4ed8;
+}
+
+/* ================= TABLE ================= */
+.asset-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.asset-table th,
+.asset-table td {
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.asset-table th {
+  background: #0a1e4b;
+  color: #fff;
+  font-weight: 500;
+}
+
+.asset-table tr:nth-child(even) {
+  background: #f1f5f9;
+}
+
+/* ================= ACTION BUTTONS ================= */
+.asset-table button {
+  margin-right: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.asset-table button:first-child {
+  background: #dff1e3;
+  color: #24da3f;
+}
+
+.asset-table button:last-child {
+  background: #f8f1f1;
+  color: #e61414;
+}
+
+.asset-table button:hover {
+  opacity: 0.9;
+}
+
+/* ================= PAGINATION ================= */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .asset-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .asset-search {
+    justify-content: center;
+  }
+
+  .asset-search input {
+    width: 100%;
+  }
+}

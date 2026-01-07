@@ -1,0 +1,91 @@
+/* ===== Premium Profile Card ===== */
+
+.card {
+  width: 360px;
+  margin: 120px auto;
+  padding: 28px;
+  border-radius: 20px;
+
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+
+  color: #eaeaea;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 25px 55px rgba(0, 0, 0, 0.8);
+}
+
+/* ===== Title ===== */
+
+.card-title {
+  text-align: center;
+  font-size: 26px;
+  letter-spacing: 1px;
+  color: #ffffff;
+  margin-bottom: 14px;
+}
+
+.card hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #00e5ff, transparent);
+  margin-bottom: 22px;
+}
+
+/* ===== Profile Rows ===== */
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 10px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.card-item {
+  font-size: 15px;
+  color: #b0bec5;
+}
+
+.card-row strong {
+  color: #00e5ff;
+  font-weight: 600;
+}
+
+/* ===== Footer ===== */
+
+.card-foot {
+  margin-top: 26px;
+  text-align: center;
+}
+
+.card-link {
+  text-decoration: none;
+  font-size: 16px;
+  padding: 12px 26px;
+  border-radius: 30px;
+
+  color: #000;
+  background: linear-gradient(135deg, #00e5ff, #1de9b6);
+
+  font-weight: 600;
+  letter-spacing: 0.5px;
+
+  transition: all 0.3s ease;
+}
+
+.card-link:hover {
+  background: linear-gradient(135deg, #1de9b6, #00e5ff);
+  box-shadow: 0 0 18px rgba(0, 229, 255, 0.6);
+  transform: scale(1.05);
+}

@@ -1,0 +1,55 @@
+/* Card Layout */
+.card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  max-width: 1900px;
+  width: 900px;
+  margin: 40px auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Table Styling */
+.nice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.nice-table th,
+.nice-table td {
+  padding: 12px 15px;
+  border: 1px solid #ddd; /* Light border */
+  text-align: left;
+}
+
+.nice-table th {
+  background-color: #163c87;
+  color: white;
+  font-weight: 600;
+}
+
+.nice-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.nice-table tr:hover {
+  background-color: #e1eaff;
+}
+
+/* Card Footer */
+.card-foot {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.card-link {
+  color: #163c87;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.card-link:hover {
+  text-decoration: underline;
+}
