@@ -1,1 +1,26 @@
 node_modules
+# Python bytecode
+*.pyc
+__pycache__/
+
+# Python virtual environment
+workenv/
+env/
+venv/
+
+# Django specific
+*.sqlite3       # local database
+db.sqlite3      # optional if using sqlite
+media/          # uploaded files
+*.log
+*.pot           # translation files
+*.mo
+
+# Node.js / frontend (React)
+node_modules/
+frontend/build/
+
+# IDE / editor files
+.vscode/
+.idea/
+*.swp
