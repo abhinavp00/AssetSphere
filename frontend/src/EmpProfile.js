@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { BASE_URL } from "../config"; // optional if fetching from backend
+import axios from "axios";
 import "./Profile.css";
 
 function EmpProfile() {
@@ -24,6 +26,12 @@ function EmpProfile() {
       }
 
       setUser(parsedUser);
+
+      // OPTIONAL: Fetch fresh user data from backend
+      // axios.get(`${BASE_URL}/users/${parsedUser.id}/`)
+      //   .then(res => setUser(res.data))
+      //   .catch(err => console.error("Failed to fetch user:", err));
+
     } catch (err) {
       console.error(err);
       setError("Invalid user session.");

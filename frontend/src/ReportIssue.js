@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { BASE_URL } from "../config"; // ✅ import BASE_URL
 import "./ReportIssue.css";
 
 function ReportIssue() {
@@ -22,13 +23,13 @@ function ReportIssue() {
   useEffect(() => {
     // Fetch assets
     axios
-      .get("http://127.0.0.1:8000/api/asset/")
+      .get(`${BASE_URL}/asset/`) // ✅ use BASE_URL
       .then(res => setAssets(res.data))
       .catch(err => console.error("Error fetching assets:", err));
 
     // Fetch users and filter technicians
     axios
-      .get("http://127.0.0.1:8000/api/users/")
+      .get(`${BASE_URL}/users/`) // ✅ use BASE_URL
       .then(res => {
         const techs = res.data.filter(u => u.role === "TECHNICIAN");
         setTechnicians(techs);
@@ -54,7 +55,7 @@ function ReportIssue() {
       };
 
       // POST new ticket
-      const res = await axios.post("http://127.0.0.1:8000/api/tickets/", payload);
+      await axios.post(`${BASE_URL}/tickets/`, payload); // ✅ use BASE_URL
       alert("Ticket created successfully!");
 
       // Update localStorage counter to notify other components

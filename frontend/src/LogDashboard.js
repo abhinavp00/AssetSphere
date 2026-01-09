@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import { BASE_URL } from "../config"; // ✅ Use centralized BASE_URL
+
 import Assignment from "./Assignment";
 import EmpProfile from "./EmpProfile";
 import Ticket from "./Ticket";
@@ -43,17 +45,17 @@ function Dashboard() {
     // Fetch all assets
     const fetchAssets = async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:8000/api/asset/");
+        const res = await axios.get(`${BASE_URL}/asset/`); // ✅ use BASE_URL
         const assets = res.data;
 
         setTotalAssets(assets.length);
 
         // Assets assigned to this employee
-       const myAssets = assets.filter(asset => {
-  const assignedId = asset.assigned_to?.id ?? asset.assigned_to; // handles both object and number
-  return assignedId === loggedUserId;
-});
-setMyAssetsCount(myAssets.length);
+        const myAssets = assets.filter(asset => {
+          const assignedId = asset.assigned_to?.id ?? asset.assigned_to;
+          return assignedId === loggedUserId;
+        });
+        setMyAssetsCount(myAssets.length);
       } catch (err) {
         console.error("Error fetching assets:", err);
       }
@@ -62,7 +64,7 @@ setMyAssetsCount(myAssets.length);
     // Fetch inventory
     const fetchInventory = async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:8000/api/inventory/");
+        const res = await axios.get(`${BASE_URL}/inventory/`); // ✅ use BASE_URL
         setTotalInventory(res.data.length);
       } catch (err) {
         console.error("Error fetching inventory:", err);
@@ -72,7 +74,7 @@ setMyAssetsCount(myAssets.length);
     // Fetch tickets
     const fetchTickets = async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:8000/api/tickets/");
+        const res = await axios.get(`${BASE_URL}/tickets/`); // ✅ use BASE_URL
         const tickets = res.data;
 
         setActiveTickets(tickets.filter(t => t.status === "received" || t.status === "in progress").length);

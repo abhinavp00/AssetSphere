@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import { BASE_URL } from "../config"; // ✅ centralized base URL
 import EmpProfile from "./EmpProfile";
 import TechTickets from "./TechTickets";
 import ReportIssue from "./ReportIssue";
-
 
 import "./Dashboard.css";
 import "./LogDashboard.css";
@@ -15,7 +15,6 @@ function TechDash() {
   const [activeItem, setActiveItem] = useState("Dashboard");
   const [tickets, setTickets] = useState([]);
   const [ticketCount, setTicketCount] = useState(0); 
-  
   const [resolvedTickets, setResolvedTickets] = useState(0);
 
   const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
@@ -33,7 +32,7 @@ function TechDash() {
   /* ================= FETCH TICKETS ================= */
   const fetchTickets = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/tickets/");
+      const res = await axios.get(`${BASE_URL}/tickets/`); // ✅ use BASE_URL
       const allTickets = res.data;
       setTickets(allTickets);
 
@@ -47,27 +46,28 @@ function TechDash() {
   useEffect(() => {
     fetchTickets();
   }, []);
+
   useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const res = await axios.get("http://127.0.0.1:8000/api/tickets/");
-      const activeTickets = res.data.filter(ticket => ticket.status !== "resolved");
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/tickets/`); // ✅ use BASE_URL
+        const activeTickets = res.data.filter(ticket => ticket.status !== "resolved");
 
-      setTickets(activeTickets);
-      setTicketCount(activeTickets.length); // ✅ store ticket count
-    } catch (err) {
-      console.error("Error fetching tickets:", err);
-    }
-  };
+        setTickets(activeTickets);
+        setTicketCount(activeTickets.length); // ✅ store ticket count
+      } catch (err) {
+        console.error("Error fetching tickets:", err);
+      }
+    };
 
-  fetchData();
-}, []);
+    fetchData();
+  }, []);
 
   /* ================= HANDLE RESOLVE ================= */
   const handleResolvedTicket = async (ticketId) => {
     try {
       // Mark ticket as resolved in backend
-      await axios.patch(`http://127.0.0.1:8000/api/tickets/${ticketId}/`, {
+      await axios.patch(`${BASE_URL}/tickets/${ticketId}/`, { // ✅ use BASE_URL
         status: "resolved",
         resolved_on: new Date().toISOString(),
       });
@@ -91,9 +91,6 @@ function TechDash() {
   /* ================= DASHBOARD COUNTS ================= */
   // Tickets assigned to this technician
   const myTickets = tickets.filter(t => t.assigned_technician === techId);
-
-  // New jobs = tickets assigned to this tech and not resolved
-  // const newJobsCount = myTickets.filter(t => t.status !== "resolved").length;
 
   /* ================= RENDER CONTENT ================= */
   const renderContent = () => {
@@ -177,4 +174,4 @@ function TechDash() {
   );
 }
 
-export default TechDash;  
+export default TechDash;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Asset.css";
-// import AssetStatusChart from "./AssetStatusChart";
+import { getAssets, createAsset, updateAsset, deleteAsset } from "../api";
 
 function Asset() {
   const [assetData, setAssetData] = useState([]);
@@ -17,22 +17,21 @@ function Asset() {
     status: "available",
     purchase_date: "",
   });
-  
 
-  // === COUNTS IN STATE ===
+  // Counts
   const [totalAssets, setTotalAssets] = useState(0);
   const [inUseCount, setInUseCount] = useState(0);
   const [underMaintenanceCount, setUnderMaintenanceCount] = useState(0);
   const [disposedCount, setDisposedCount] = useState(0);
 
-  /* ================= FETCH ================= */
+  // ================= FETCH =================
   const fetchAssets = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/asset/");
-      const data = await response.json();
+      const res = await getAssets();
+      const data = res.data;
       setAssetData(data);
 
-      // Update counts in state
+      // Update counts
       setTotalAssets(data.length);
       setInUseCount(data.filter(a => a.status === "in_use").length);
       setUnderMaintenanceCount(data.filter(a => a.status === "under_maintenance").length);
@@ -46,69 +45,51 @@ function Asset() {
     fetchAssets();
   }, []);
 
-  /* ================= ADD / UPDATE ================= */
+  // ================= ADD / UPDATE =================
   const handleAddAsset = async () => {
     if (!newAsset.name || !newAsset.asset_type || !newAsset.serial_number || !newAsset.purchase_date) {
       alert("Please fill all fields");
       return;
     }
 
-    const url = editingAssetId
-      ? `http://127.0.0.1:8000/api/asset/${editingAssetId}/`
-      : "http://127.0.0.1:8000/api/asset/";
-
-    const method = editingAssetId ? "PUT" : "POST";
-
     try {
-      const response = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newAsset),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Backend Error:", errorData);
-        alert("Error saving asset. Check console.");
-        return;
+      if (editingAssetId) {
+        await updateAsset(editingAssetId, newAsset);
+      } else {
+        await createAsset(newAsset);
       }
 
-      fetchAssets(); // re-fetch assets and update counts
-      setNewAsset({
-        name: "",
-        asset_type: "",
-        serial_number: "",
-        status: "available",
-        purchase_date: "",
-      });
+      fetchAssets();
+      setNewAsset({ name: "", asset_type: "", serial_number: "", status: "available", purchase_date: "" });
       setEditingAssetId(null);
       setShowForm(false);
     } catch (error) {
       console.error("Error saving asset:", error);
+      alert("Error saving asset. Check console.");
     }
   };
 
-  /* ================= EDIT ================= */
+  // ================= EDIT =================
   const handleEdit = (asset) => {
     setNewAsset(asset);
     setEditingAssetId(asset.id);
     setShowForm(true);
   };
 
-  /* ================= DELETE ================= */
+  // ================= DELETE =================
   const handleRemove = async (id) => {
     if (!window.confirm("Delete this asset?")) return;
 
     try {
-      await fetch(`http://127.0.0.1:8000/api/asset/${id}/`, { method: "DELETE" });
-      fetchAssets(); // re-fetch assets and update counts
+      await deleteAsset(id);
+      fetchAssets();
     } catch (error) {
       console.error("Error deleting asset:", error);
     }
   };
 
-  /* ================= SEARCH & PAGINATION ================= */
-  const filteredAssets = assetData.filter((asset) => {
+  // ================= SEARCH & PAGINATION =================
+  const filteredAssets = assetData.filter(asset => {
     const search = searchTerm.toLowerCase();
     return (
       asset.name.toLowerCase().includes(search) ||
@@ -137,10 +118,7 @@ function Asset() {
           type="text"
           placeholder="Search by name, type, serial, or status..."
           value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setCurrentPage(1);
-          }}
+          onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }}
         />
       </div>
 
@@ -163,42 +141,20 @@ function Asset() {
           <p>{disposedCount}</p>
         </div>
       </div>
-      {/* GRAPH */}
-
-
 
       {/* FORM */}
       {showForm && (
         <div className="asset-form">
-          <input
-            placeholder="Asset Name"
-            value={newAsset.name}
-            onChange={(e) => setNewAsset({ ...newAsset, name: e.target.value })}
-          />
-          <input
-            placeholder="Asset Type"
-            value={newAsset.asset_type}
-            onChange={(e) => setNewAsset({ ...newAsset, asset_type: e.target.value })}
-          />
-          <input
-            placeholder="Serial Number"
-            value={newAsset.serial_number}
-            onChange={(e) => setNewAsset({ ...newAsset, serial_number: e.target.value })}
-          />
-          <select
-            value={newAsset.status}
-            onChange={(e) => setNewAsset({ ...newAsset, status: e.target.value })}
-          >
+          <input placeholder="Asset Name" value={newAsset.name} onChange={e => setNewAsset({ ...newAsset, name: e.target.value })} />
+          <input placeholder="Asset Type" value={newAsset.asset_type} onChange={e => setNewAsset({ ...newAsset, asset_type: e.target.value })} />
+          <input placeholder="Serial Number" value={newAsset.serial_number} onChange={e => setNewAsset({ ...newAsset, serial_number: e.target.value })} />
+          <select value={newAsset.status} onChange={e => setNewAsset({ ...newAsset, status: e.target.value })}>
             <option value="available">Available</option>
             <option value="in_use">In Use</option>
             <option value="under_maintenance">Under Maintenance</option>
             <option value="disposed">Disposed</option>
           </select>
-          <input
-            type="date"
-            value={newAsset.purchase_date}
-            onChange={(e) => setNewAsset({ ...newAsset, purchase_date: e.target.value })}
-          />
+          <input type="date" value={newAsset.purchase_date} onChange={e => setNewAsset({ ...newAsset, purchase_date: e.target.value })} />
           <button onClick={handleAddAsset}>{editingAssetId ? "Update Asset" : "Add Asset"}</button>
         </div>
       )}
@@ -216,7 +172,7 @@ function Asset() {
           </tr>
         </thead>
         <tbody>
-          {currentAssets.map((asset) => (
+          {currentAssets.map(asset => (
             <tr key={asset.id}>
               <td>{asset.name}</td>
               <td>{asset.asset_type}</td>
@@ -234,15 +190,9 @@ function Asset() {
 
       {/* PAGINATION */}
       <div className="pagination">
-        <button disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)}>
-          &lt;
-        </button>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-        <button disabled={currentPage === totalPages} onClick={() => setCurrentPage((p) => p + 1)}>
-          &gt;
-        </button>
+        <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>&lt;</button>
+        <span>Page {currentPage} of {totalPages}</span>
+        <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}>&gt;</button>
       </div>
     </div>
   );

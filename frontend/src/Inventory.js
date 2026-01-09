@@ -1,21 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { BASE_URL } from "../config"; // centralized API URL
 
 function Inventory() {
   const [inventoryData, setInventoryData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
-
-  const [newInvent, setNewInvent] = useState({
-    item_type: "",
-    quantity: "",
-    threshold: "",
-  });
-
+  const [newInvent, setNewInvent] = useState({ item_type: "", quantity: "", threshold: "" });
   const [editInventId, setEditInventId] = useState(null);
 
+  /* ================= FETCH INVENTORY ================= */
   const fetchInventory = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/inventory/");
+      const response = await fetch(`${BASE_URL}/inventory/`);
       const data = await response.json();
       setInventoryData(data);
     } catch (error) {
@@ -27,6 +23,7 @@ function Inventory() {
     fetchInventory();
   }, []);
 
+  /* ================= ADD / UPDATE ================= */
   const handleAddInvent = async () => {
     if (!newInvent.item_type || !newInvent.quantity || !newInvent.threshold) {
       alert("Please fill all fields");
@@ -34,8 +31,8 @@ function Inventory() {
     }
 
     const url = editInventId
-      ? `http://127.0.0.1:8000/api/inventory/${editInventId}/`
-      : "http://127.0.0.1:8000/api/inventory/";
+      ? `${BASE_URL}/inventory/${editInventId}/`
+      : `${BASE_URL}/inventory/`;
 
     const method = editInventId ? "PUT" : "POST";
 
@@ -51,7 +48,7 @@ function Inventory() {
         return;
       }
 
-      fetchInventory();
+      fetchInventory(); // refresh data
       setNewInvent({ item_type: "", quantity: "", threshold: "" });
       setEditInventId(null);
       setShowForm(false);
@@ -60,7 +57,7 @@ function Inventory() {
     }
   };
 
-  // 🔹 Edit inventory
+  /* ================= EDIT ================= */
   const handleEdit = (item) => {
     setNewInvent({
       item_type: item.item_type,
@@ -71,14 +68,12 @@ function Inventory() {
     setShowForm(true);
   };
 
-  // 🔹 Delete inventory
+  /* ================= DELETE ================= */
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/inventory/${id}/`, {
-        method: "DELETE",
-      });
+      const response = await fetch(`${BASE_URL}/inventory/${id}/`, { method: "DELETE" });
 
       if (!response.ok) {
         alert("Error deleting item");
@@ -91,6 +86,7 @@ function Inventory() {
     }
   };
 
+  /* ================= HELPER ================= */
   const getStatus = (qty) => {
     if (qty === 0) return "Out of Stock";
     if (qty <= 5) return "Low Stock";
@@ -104,9 +100,9 @@ function Inventory() {
   return (
     <div style={styles.container}>
       <h1>Inventory Dashboard</h1>
-      <hr/>
+      <hr />
 
-      {/* ➕ ADD BUTTON */}
+      {/* ADD / EDIT BUTTON */}
       <button
         onClick={() => setShowForm(true)}
         style={{ ...styles.addBtn, marginBottom: "15px" }}
@@ -114,37 +110,30 @@ function Inventory() {
         {editInventId ? "Edit Inventory" : "+ Add Inventory"}
       </button>
 
-      {/* ➕ FORM */}
+      {/* FORM */}
       {showForm && (
         <div style={styles.form}>
           <input
             placeholder="Item Type"
             value={newInvent.item_type}
-            onChange={(e) =>
-              setNewInvent({ ...newInvent, item_type: e.target.value })
-            }
+            onChange={(e) => setNewInvent({ ...newInvent, item_type: e.target.value })}
           />
           <input
             type="number"
             placeholder="Quantity"
             value={newInvent.quantity}
-            onChange={(e) =>
-              setNewInvent({ ...newInvent, quantity: e.target.value })
-            }
+            onChange={(e) => setNewInvent({ ...newInvent, quantity: e.target.value })}
           />
           <input
             type="number"
             placeholder="Threshold"
             value={newInvent.threshold}
-            onChange={(e) =>
-              setNewInvent({ ...newInvent, threshold: e.target.value })
-            }
+            onChange={(e) => setNewInvent({ ...newInvent, threshold: e.target.value })}
           />
 
           <button onClick={handleAddInvent} style={styles.addBtn}>
             Save
           </button>
-
           <button
             onClick={() => {
               setShowForm(false);
@@ -158,7 +147,7 @@ function Inventory() {
         </div>
       )}
 
-      {/* 🔍 Search */}
+      {/* SEARCH */}
       <input
         type="text"
         placeholder="Search item type..."
@@ -167,25 +156,23 @@ function Inventory() {
         style={styles.search}
       />
 
-      {/* Summary Cards */}
-{/* Summary Cards */}
-<div style={styles.cardRow}>
-  <div style={{ ...styles.card, backgroundColor: "#5f8ff1ff", color: "#fff" }}>
-    <h3>Total Items</h3>
-    <p>{inventoryData.length}</p>
-  </div>
-  <div style={{ ...styles.card, backgroundColor: "#28a745", color: "#fff" }}>
-    <h3>In Stock</h3>
-    <p>{inventoryData.filter(i => i.quantity > 5).length}</p>
-  </div>
-  <div style={{ ...styles.card, backgroundColor: "#ffc107", color: "#000" }}>
-    <h3>Low / Out Stock</h3>
-    <p>{inventoryData.filter(i => i.quantity <= 5).length}</p>
-  </div>
-</div>
+      {/* SUMMARY CARDS */}
+      <div style={styles.cardRow}>
+        <div style={{ ...styles.card, backgroundColor: "#5f8ff1ff", color: "#fff" }}>
+          <h3>Total Items</h3>
+          <p>{inventoryData.length}</p>
+        </div>
+        <div style={{ ...styles.card, backgroundColor: "#28a745", color: "#fff" }}>
+          <h3>In Stock</h3>
+          <p>{inventoryData.filter(i => i.quantity > 5).length}</p>
+        </div>
+        <div style={{ ...styles.card, backgroundColor: "#ffc107", color: "#000" }}>
+          <h3>Low / Out Stock</h3>
+          <p>{inventoryData.filter(i => i.quantity <= 5).length}</p>
+        </div>
+      </div>
 
-
-      {/* Table */}
+      {/* TABLE */}
       <table style={styles.table}>
         <thead>
           <tr>
@@ -204,13 +191,8 @@ function Inventory() {
               <td>{item.threshold}</td>
               <td
                 style={{
-                  color:
-                    item.quantity === 0
-                      ? "red"
-                      : item.quantity <= 5
-                      ? "orange"
-                      : "green",
-                  fontWeight: "bold"
+                  color: item.quantity === 0 ? "red" : item.quantity <= 5 ? "orange" : "green",
+                  fontWeight: "bold",
                 }}
               >
                 {getStatus(item.quantity)}
@@ -231,39 +213,10 @@ const styles = {
   container: { padding: "20px", background: "#f4f6f8" },
   search: { padding: "10px", width: "300px", marginBottom: "10px" },
   form: { display: "flex", gap: "10px", marginBottom: "20px" },
-  addBtn: {
-    background: "#163c87",
-    color: "#fff",
-    border: "none",
-    padding: "10px 15px",
-    cursor: "pointer",
-    borderRadius: "4px",
-  },
-  cancelBtn: {
-    background: "#999",
-    color: "#fff",
-    border: "none",
-    padding: "10px 15px",
-    cursor: "pointer",
-    borderRadius: "4px",
-  },
-  editBtn: {
-    background: "#f5f4f3ff",
-    color: "#6ee81dff",
-    border: "none",
-    padding: "5px 10px",
-    marginRight: "5px",
-    borderRadius: "4px",
-    cursor: "pointer",
-  },
-  deleteBtn: {
-    background: "#f8efefff",
-    color: "#d11212ff",
-    border: "none",
-    padding: "5px 10px",
-    borderRadius: "4px",
-    cursor: "pointer",
-  },
+  addBtn: { background: "#163c87", color: "#fff", border: "none", padding: "10px 15px", cursor: "pointer", borderRadius: "4px" },
+  cancelBtn: { background: "#999", color: "#fff", border: "none", padding: "10px 15px", cursor: "pointer", borderRadius: "4px" },
+  editBtn: { background: "#f5f4f3ff", color: "#6ee81dff", border: "none", padding: "5px 10px", marginRight: "5px", borderRadius: "4px", cursor: "pointer" },
+  deleteBtn: { background: "#f8efefff", color: "#d11212ff", border: "none", padding: "5px 10px", borderRadius: "4px", cursor: "pointer" },
   cardRow: { display: "flex", gap: "20px", marginBottom: "30px" },
   card: { background: "#fff", padding: "20px", borderRadius: "8px", width: "200px" },
   table: { width: "100%", background: "#fff", borderCollapse: "collapse" },

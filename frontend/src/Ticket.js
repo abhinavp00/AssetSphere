@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { BASE_URL } from "../config"; // ✅ use BASE_URL
 import "./Tickets.css";
 
 function Ticket() {
@@ -7,7 +8,6 @@ function Ticket() {
   const [users, setUsers] = useState([]);
   const [assets, setAssets] = useState([]);
 
-  // Logged-in user info for frontend defaults
   const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   /* ================= FETCH TICKETS, USERS & ASSETS ================= */
@@ -15,20 +15,18 @@ function Ticket() {
     const fetchData = async () => {
       try {
         const [ticketRes, userRes, assetRes] = await Promise.all([
-          axios.get("http://127.0.0.1:8000/api/tickets/"),
-          axios.get("http://127.0.0.1:8000/api/users/"),
-          axios.get("http://127.0.0.1:8000/api/asset/"),
+          axios.get(`${BASE_URL}/tickets/`),
+          axios.get(`${BASE_URL}/users/`),
+          axios.get(`${BASE_URL}/asset/`),
         ]);
 
         setUsers(userRes.data);
         setAssets(assetRes.data);
 
-        // Enrich tickets with frontend-only fields
         const enrichedTickets = ticketRes.data.map(ticket => ({
           ...ticket,
           reported_by: ticket.reported_by || storedUser.username || "Unknown",
           opened_on: ticket.opened_on || new Date().toISOString(),
-          // If technician assigned, set assigned_at to now
           assigned_at: ticket.assigned_technician
             ? ticket.assigned_at || new Date().toISOString()
             : null,
@@ -36,7 +34,6 @@ function Ticket() {
         }));
 
         setTickets(enrichedTickets);
-
       } catch (err) {
         console.error("Error fetching data:", err);
       }
@@ -57,13 +54,11 @@ function Ticket() {
 
   const getUserName = (idOrName) => {
     if (!idOrName) return "Not Assigned";
-
     if (typeof idOrName === "number") {
       const user = users.find(u => u.id === idOrName);
       return user ? user.username : "Unknown";
     }
-
-    return idOrName; // already a string
+    return idOrName;
   };
 
   const getAssetName = (id) => {
@@ -72,7 +67,7 @@ function Ticket() {
     return asset ? asset.name : "-";
   };
 
-  const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleString() : "-";
+  const formatDate = (dateStr) => (dateStr ? new Date(dateStr).toLocaleString() : "-");
 
   /* ================= RENDER ================= */
   return (
@@ -88,7 +83,6 @@ function Ticket() {
             <th>Reported By</th>
             <th>Opened On</th>
             <th>Assigned</th>
-            {/* <th>Resolved On</th> */}
             <th>Technician</th>
             <th>Action</th>
           </tr>
@@ -97,25 +91,26 @@ function Ticket() {
         <tbody>
           {tickets.length === 0 ? (
             <tr>
-              <td colSpan="9" className="no-data">No tickets found</td>
+              <td colSpan="8" className="no-data">No tickets found</td>
             </tr>
-          ) : tickets.map(ticket => (
-            <tr key={ticket.id}>
-              <td>{getAssetName(ticket.asset)}</td>
-              <td>{ticket.issue}</td>
-              <td>
-                <span className={`status-badge ${getStatusClass(ticket.status)}`}>
-                  {ticket.status}
-                </span>
-              </td>
-              <td>{getUserName(ticket.reported_by)}</td>
-              <td>{formatDate(ticket.opened_on)}</td>
-              <td>{formatDate(ticket.assigned_at)}</td>
-              {/* <td>{formatDate(ticket.resolved_on)}</td> */}
-              <td>{getUserName(ticket.assigned_technician)}</td>
-              <td><button className="action-btn">View</button></td>
-            </tr>
-          ))}
+          ) : (
+            tickets.map(ticket => (
+              <tr key={ticket.id}>
+                <td>{getAssetName(ticket.asset)}</td>
+                <td>{ticket.issue}</td>
+                <td>
+                  <span className={`status-badge ${getStatusClass(ticket.status)}`}>
+                    {ticket.status}
+                  </span>
+                </td>
+                <td>{getUserName(ticket.reported_by)}</td>
+                <td>{formatDate(ticket.opened_on)}</td>
+                <td>{formatDate(ticket.assigned_at)}</td>
+                <td>{getUserName(ticket.assigned_technician)}</td>
+                <td><button className="action-btn">View</button></td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

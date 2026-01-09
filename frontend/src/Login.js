@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../config"; // ✅ import BASE_URL
 import "./Login.css";
 
 function Login() {
@@ -14,7 +15,8 @@ function Login() {
     setError("");
 
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/users/");
+      // ✅ use BASE_URL
+      const response = await axios.get(`${BASE_URL}/users/`);
       const users = response.data;
 
       const user = users.find(
@@ -26,6 +28,7 @@ function Login() {
         localStorage.setItem(
           "user",
           JSON.stringify({
+            id: user.id,           // store id too for later use
             username: user.username,
             email: user.email,
             role: user.role,

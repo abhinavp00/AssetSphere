@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 import AssetStatusChart from "./AssetStatusChart";
 import InventoryStatusChart from "./InventoryStatusChart";
@@ -11,6 +10,7 @@ import Users from "./Users";
 import Assignment from "./Assignment";
 import Ticket from "./Ticket";
 
+import { getAssets, getInventory, getTickets } from "../api";
 import "./Dashboard.css";
 
 function Dashboard() {
@@ -33,43 +33,29 @@ function Dashboard() {
   // ===== RECENT ACTIVITY =====
   const [activities, setActivities] = useState([]);
 
-  const menuItems = [
-    "Dashboard",
-    "Asset",
-    "Inventory",
-    "Assignment",
-    "Tickets",
-    "Users",
-    "Profile",
-  ];
+  const menuItems = ["Dashboard", "Asset", "Inventory", "Assignment", "Tickets", "Users", "Profile"];
 
-  const handleLogout = () => {
-    navigate("/");
-  };
+  const handleLogout = () => navigate("/");
 
   /* ================= FETCH DASHBOARD DATA ================= */
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         // ---------- ASSETS ----------
-        const assetRes = await axios.get("http://127.0.0.1:8000/api/asset/");
+        const assetRes = await getAssets();
         const assets = assetRes.data;
 
         setTotalAssets(assets.length);
         setInUseCount(assets.filter(a => a.status === "in_use").length);
-        setUnderMaintenanceCount(
-          assets.filter(a => a.status === "under_maintenance").length
-        );
-        setDisposedCount(
-          assets.filter(a => a.status === "disposed").length
-        );
+        setUnderMaintenanceCount(assets.filter(a => a.status === "under_maintenance").length);
+        setDisposedCount(assets.filter(a => a.status === "disposed").length);
 
         // ---------- INVENTORY ----------
-        const inventoryRes = await axios.get("http://127.0.0.1:8000/api/inventory/");
+        const inventoryRes = await getInventory();
         setTotalInventory(inventoryRes.data.length);
 
         // ---------- TICKETS ----------
-        const ticketRes = await axios.get("http://127.0.0.1:8000/api/tickets/");
+        const ticketRes = await getTickets();
         const tickets = ticketRes.data;
 
         const openTickets = tickets.filter(t => t.status !== "resolved").length;
@@ -78,16 +64,13 @@ function Dashboard() {
         setTicketCount(openTickets);
         setResolvedTickets(resolved);
 
-        // ---------- RECENT ACTIVITY (FRONTEND DERIVED) ----------
+        // ---------- RECENT ACTIVITY ----------
         const recent = [];
 
         tickets.slice(-3).forEach(t => {
           recent.push({
             id: `ticket-${t.id}`,
-            message:
-              t.status === "resolved"
-                ? `Ticket #${t.id} resolved`
-                : `New ticket #${t.id} created`,
+            message: t.status === "resolved" ? `Ticket #${t.id} resolved` : `New ticket #${t.id} created`,
             time: t.updated_at || t.created_at || new Date(),
           });
         });
@@ -102,7 +85,6 @@ function Dashboard() {
 
         recent.sort((a, b) => new Date(b.time) - new Date(a.time));
         setActivities(recent.slice(0, 5));
-
       } catch (error) {
         console.error("Dashboard fetch failed:", error);
       }
@@ -114,20 +96,13 @@ function Dashboard() {
   /* ================= RENDER CONTENT ================= */
   const renderContent = () => {
     switch (activeItem) {
-      case "Asset":
-        return <Asset />;
-      case "Inventory":
-        return <Inventory />;
-      case "Assignment":
-        return <Assignment />;
-      case "Tickets":
-        return <Ticket />;
-      case "Users":
-        return <Users />;
-      case "Profile":
-        return <Profile />;
-      default:
-        return null;
+      case "Asset": return <Asset />;
+      case "Inventory": return <Inventory />;
+      case "Assignment": return <Assignment />;
+      case "Tickets": return <Ticket />;
+      case "Users": return <Users />;
+      case "Profile": return <Profile />;
+      default: return null;
     }
   };
 
@@ -136,7 +111,6 @@ function Dashboard() {
       {/* SIDEBAR */}
       <aside className="sidebar">
         <h1 className="sidebar-logo">AssetSphere</h1>
-
         <ul className="sidebar-menu">
           {menuItems.map(item => (
             <li
@@ -148,42 +122,22 @@ function Dashboard() {
             </li>
           ))}
         </ul>
-
         <hr />
-        <div className="sidebar-logout" onClick={handleLogout}>
-          Logout
-        </div>
+        <div className="sidebar-logout" onClick={handleLogout}>Logout</div>
       </aside>
 
       {/* MAIN */}
       <main className="dashboard-content">
-        <header className="dashboard-header">
-          <h1>{activeItem}</h1>
-        </header>
+        <header className="dashboard-header"><h1>{activeItem}</h1></header>
 
         {activeItem === "Dashboard" && (
           <>
             {/* SUMMARY CARDS */}
             <div className="dashboard-summary">
-              <div className="summary-card">
-                Total Assets
-                <span>{totalAssets}</span>
-              </div>
-
-              <div className="summary-card">
-                Total Inventory
-                <span>{totalInventory}</span>
-              </div>
-
-              <div className="summary-card">
-                Assigned Assets
-                <span>{inUseCount}</span>
-              </div>
-
-              <div className="summary-card">
-                Open Tickets
-                <span>{ticketCount}</span>
-              </div>
+              <div className="summary-card">Total Assets <span>{totalAssets}</span></div>
+              <div className="summary-card">Total Inventory <span>{totalInventory}</span></div>
+              <div className="summary-card">Assigned Assets <span>{inUseCount}</span></div>
+              <div className="summary-card">Open Tickets <span>{ticketCount}</span></div>
             </div>
 
             {/* CHARTS */}
@@ -210,7 +164,6 @@ function Dashboard() {
             {/* RECENT ACTIVITY */}
             <section className="recent-activity">
               <h2>Recent Activity</h2>
-
               {activities.length === 0 ? (
                 <p className="no-activity">No recent activity</p>
               ) : (
@@ -218,9 +171,7 @@ function Dashboard() {
                   {activities.map(a => (
                     <li key={a.id} className="activity-item">
                       <span>{a.message}</span>
-                      <small>
-                        {new Date(a.time).toLocaleString()}
-                      </small>
+                      <small>{new Date(a.time).toLocaleString()}</small>
                     </li>
                   ))}
                 </ul>

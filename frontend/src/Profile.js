@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { BASE_URL } from "../config"; // ✅ import BASE_URL
 import "./Profile.css";
 
 function Profile() {
@@ -8,7 +8,7 @@ function Profile() {
   useEffect(() => {
     const fetchAdminUsers = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/users/");
+        const response = await fetch(`${BASE_URL}/users/`); // ✅ use BASE_URL
         const data = await response.json();
 
         // Filter only ADMIN users
@@ -24,7 +24,9 @@ function Profile() {
 
   return (
     <div className="card">
-      <h1 className="card-title" style={{fontFamily:"-moz-initial"}}>Profile</h1>
+      <h1 className="card-title" style={{ fontFamily: "-moz-initial" }}>
+        Profile
+      </h1>
       <hr />
 
       {adminUsers.length === 0 ? (
@@ -33,7 +35,6 @@ function Profile() {
         <table className="profile-table">
           <thead>
             <tr>
-            
               <th>Username</th>
               <th>Email</th>
               <th>Role</th>
@@ -42,18 +43,14 @@ function Profile() {
           <tbody>
             {adminUsers.map(user => (
               <tr key={user.id}>
-                
-                <td style={{color:"skyblue"}}>{user.username}</td>
-                
+                <td style={{ color: "skyblue" }}>{user.username}</td>
                 <td>{user.email}</td>
-                <td style={{color:"red"}}>{user.role}</td>
+                <td style={{ color: "red" }}>{user.role}</td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
-
-      
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { BASE_URL } from "../config"; // ✅ use a centralized BASE_URL
 import "./Profile.css";
 import "./Users.css";
 
@@ -9,13 +9,14 @@ function Users() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/users/");
+        const response = await fetch(`${BASE_URL}/users/`); // ✅ use BASE_URL
         const data = await response.json();
         setUsers(data);
       } catch (error) {
         console.error("Failed to fetch users:", error);
       }
     };
+
     fetchUsers();
   }, []);
 
@@ -36,18 +37,18 @@ function Users() {
             </tr>
           </thead>
           <tbody>
-            {users.map(user => (
+            {users.map((user) => (
               <tr key={user.id}>
-                <td>{user.username}</td>
+                <td style={{ color: "skyblue" }}>{user.username}</td>
                 <td>{user.email}</td>
-                <td>{user.role}</td>
+                <td style={{ color: user.role === "ADMIN" ? "red" : "green" }}>
+                  {user.role}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
-
-     
     </div>
   );
 }
