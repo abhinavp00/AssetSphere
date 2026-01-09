@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-na!chmv3x93r8k@0d2ry9m+4#80t)7=^i2hz5auq)wo6k9i!_c
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "AssetSphere-back.onrender.com",
+    "assetsphere-fullstack-fl1s.onrender.com",
     "localhost",
     "127.0.0.1",
 ]
