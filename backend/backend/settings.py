@@ -62,10 +62,10 @@ AUTH_USER_MODEL = 'backapp.User'
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "https://asset-sphere-84fkuajq1-abhinavs-projects-1c9a4418.vercel.app/",
+    "https://asset-sphere-84fkuajq1-abhinavs-projects-1c9a4418.vercel.app",
 ]
 CSRF_TRUSTED_ORIGINS = [
-    "https://asset-sphere-84fkuajq1-abhinavs-projects-1c9a4418.vercel.app/",
+    "https://asset-sphere-84fkuajq1-abhinavs-projects-1c9a4418.vercel.app",
 ]
 
 
